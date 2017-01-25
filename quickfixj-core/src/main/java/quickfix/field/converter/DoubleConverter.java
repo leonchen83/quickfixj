@@ -25,8 +25,6 @@ import quickfix.RuntimeError;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Converts between a double and a String.
