@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
  * Converts between a double and a String.
  */
 public class DoubleConverter {
-    private static final Pattern DECIMAL_PATTERN = Pattern.compile("-?\\d*(\\.\\d*)?");
     private static final ThreadLocal<DecimalFormat[]> THREAD_DECIMAL_FORMATS = new ThreadLocal<>();
 
     /**
@@ -92,13 +91,25 @@ public class DoubleConverter {
      */
     public static double convert(String value) throws FieldConvertError {
         try {
-            Matcher matcher = DECIMAL_PATTERN.matcher(value);
-            if (!matcher.matches()) {
-                throw new NumberFormatException();
-            }
-            return Double.parseDouble(value);
+            return parseDouble(value);
         } catch (NumberFormatException e) {
             throw new FieldConvertError("invalid double value: " + value);
         }
+    }
+
+    private static double parseDouble(String value) {
+        if(value.length() == 0) throw new NumberFormatException(value);
+        boolean dot = false; int i = 0;
+        char c = value.charAt(i);
+        switch (c) {
+            case '-': i++; break;
+            case '+': throw new NumberFormatException(value);
+        }
+        for (; i < value.length(); i++) {
+            c = value.charAt(i);
+            if (!dot && c == '.') dot = true;
+            else if (!Character.isDigit(c)) throw new NumberFormatException(value);
+        }
+        return Double.parseDouble(value);
     }
 }
